@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
@@ -9,8 +9,16 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [characters, setCharacters] = useState([]);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    api.get('/auth/characters').then(({ data }) => {
+      setCharacters(data);
+      if (data.length > 0) setName(data[0].name);
+    }).catch(() => {});
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -58,15 +66,18 @@ export default function Login() {
         <form className="login-form" onSubmit={handleSubmit}>
           {tab === 'player' && (
             <div className="form-group">
-              <label>Character Name</label>
-              <input
-                type="text"
+              <label>Character</label>
+              <select
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Aldric"
                 required
                 autoFocus
-              />
+              >
+                {characters.length === 0 && <option value="">No active characters</option>}
+                {characters.map((c) => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
             </div>
           )}
 

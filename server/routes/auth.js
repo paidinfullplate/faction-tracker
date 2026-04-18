@@ -38,6 +38,17 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/characters', async (req, res) => {
+  try {
+    const { query } = require('../db');
+    const characters = await query('SELECT id, name FROM characters WHERE active = TRUE ORDER BY name');
+    res.json(characters);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.get('/campaign-token', requireDM, async (req, res) => {
   try {
     const row = await queryOne("SELECT value FROM config WHERE key = 'campaign_token'");
