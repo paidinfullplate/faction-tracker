@@ -48,18 +48,6 @@ export default function DMDashboard() {
         </div>
       </div>
 
-      {tableUrl && (
-        <div className="card mb-2" style={{ borderLeft: '4px solid var(--gold)' }}>
-          <div className="card-body" style={{ padding: '0.85rem 1.2rem' }}>
-            <p className="text-xs text-muted" style={{ marginBottom: '0.2rem', fontFamily: 'var(--font-head)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-              Table View URL (share this for read-only display)
-            </p>
-            <code style={{ fontSize: '0.82rem', color: 'var(--gold-dark)', wordBreak: 'break-all' }}>
-              {tableUrl}
-            </code>
-          </div>
-        </div>
-      )}
 
       {factions.length === 0 ? (
         <div className="empty-state">
