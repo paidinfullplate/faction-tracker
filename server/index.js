@@ -7,18 +7,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Run migrations + seed once; all requests wait for this to finish
+const ready = migrate().then(seed).catch((err) => {
+  console.error('[DB] Startup error:', err);
+  process.exit(1);
+});
+
+app.use((req, res, next) => ready.then(next).catch(next));
+
 app.use('/api/auth',       require('./routes/auth'));
 app.use('/api/factions',   require('./routes/factions'));
 app.use('/api/characters', require('./routes/characters'));
 app.use('/api/events',     require('./routes/events'));
 app.use('/api/npcs',       require('./routes/npcs'));
 app.get('/api/health',     (req, res) => res.json({ ok: true }));
-
-// Run migrations + seed, then start (only when executed directly)
-const ready = migrate().then(seed).catch((err) => {
-  console.error('[DB] Startup error:', err);
-  process.exit(1);
-});
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3001;
